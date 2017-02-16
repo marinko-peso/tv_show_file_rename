@@ -7,5 +7,5 @@ Script to automatically remove noise from tv series season/episodes by renaming 
 When you provide the script with a directory it will automatically scan throught it and attempt to find all supported files inside that contain two numbers required for season and episode. After that it will rename them.
 
 ### Customization
-You can customize the script to support whatever file type you want it to by just modifying the settings on top of the script. This is to make sure you don't rename some other files you didn't have intention to.
-- ALLOWED_FILE_TYPES - which file types are allowed to be renamed.
+- ALLOWED_FILE_TYPES - support to specific file types. This is to make sure you don't rename some other files you didn't have intention to.
+- FILE_RENAME_FORMAT - generated name format, make sure to keep both placeholders if you change it.

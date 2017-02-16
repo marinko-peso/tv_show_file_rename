@@ -7,6 +7,10 @@ import re
 # Allowed types of files to be renamed.
 ALLOWED_FILE_TYPES = (".srt", ".sub", ".avi", ".mp4")
 
+# Format to rename the file.
+# WARNING: make sure to keep both placeholders (%s) or the script will fail.
+FILE_RENAME_FORMAT = "S%sE%s"
+
 
 def rename_file(file_name):
 	"""
@@ -26,15 +30,17 @@ def rename_file(file_name):
 	original_file_ext = os.path.splitext(original_file_name_with_ext)[1]
 
 	# Extract numbers from the original file name.
-	# We expect two numbers, if less or more we don't do a thing
+	# We expect two numbers, if less or more we don't do a thing.
 	file_numbers = re.findall(r'\d+', original_file_name)
 	if len(file_numbers) != 2:
-		print "--> %s doesn't have 2 numbers in its name. No action taken." % file_name
+		print "--> %s is supported but doesn't have 2 numbers in its name. No action taken." % file_name
 		return
 
-	# Create the new name for the file and rename it.
-	new_file_name = "S%sE%s" % (file_numbers[0], file_numbers[1])
+	# Generate new name for the file and full path with extension to it.
+	new_file_name = FILE_RENAME_FORMAT % (file_numbers[0], file_numbers[1])
 	new_file_full_name = os.path.join(file_location, new_file_name + original_file_ext)
+
+	# Rename the file.
 	os.rename(file_name, new_file_full_name)
 	print "--> %s successfuly renamed to %s." % (original_file_name, new_file_name)
 
@@ -44,13 +50,14 @@ def process_directory(dir_path):
 	Process should happen in the following order:
 	- get the list of files available in the directory
 	- if no files are found nothing will happen
-	- if some files are detected process them one by one
+	- if files are detected rename them one by one
 	"""
 	files = os.listdir(dir_path)
 	if files:
 		print "Directory detected, attempting to process files:"
 		for current_file in files:
 			file_path = os.path.join(dir_path, current_file)
+			# Try to rename if its a file, not another directory.
 			if not os.path.isdir(file_path):
 				rename_file(file_path)
 			else:
@@ -63,7 +70,6 @@ def process_directory_sent(dir_path):
 	"""
 	Check is the parameter sent actually a directory and if so process it.
 	"""
-	# Or is it a directory?
 	if os.path.isdir(dir_path):
 		process_directory(dir_path)
 	else:
