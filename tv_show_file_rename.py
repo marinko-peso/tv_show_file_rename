@@ -5,7 +5,7 @@ import io
 import re
 
 # Allowed types of files to be renamed.
-ALLOWED_FILE_TYPES = (".srt", ".sub", ".avi", ".mp4")
+ALLOWED_FILE_TYPES = (".srt", ".sub", ".avi", ".mp4", ".mkv")
 
 # Format to rename the file.
 # WARNING: make sure to keep both placeholders (%s) or the script will fail.
@@ -31,7 +31,12 @@ def rename_file(file_name):
 
 	# Extract numbers from the original file name.
 	# We expect two numbers, if less or more we don't do a thing.
-	file_numbers = re.findall(r'\d+', original_file_name)
+	file_numbers_temp = re.findall(r'\d+', original_file_name)
+	# Kick all numbers with more then 2 digits, those are not tv show for sure.
+	file_numbers = []
+	for fn in file_numbers_temp:
+		if len(fn) <= 2:
+			file_numbers.append(fn)
 	if len(file_numbers) != 2:
 		print "--> %s is supported but doesn't have 2 numbers in its name. No action taken." % file_name
 		return
