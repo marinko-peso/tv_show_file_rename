@@ -30,16 +30,23 @@ def rename_file(file_name):
 	original_file_ext = os.path.splitext(original_file_name_with_ext)[1]
 
 	# Extract numbers from the original file name.
-	# We expect two numbers, if less or more we don't do a thing.
+	# We expect at least two numbers.
 	file_numbers_temp = re.findall(r'\d+', original_file_name)
-	# Kick all numbers with more then 2 digits, those are not tv show for sure.
-	file_numbers = []
-	for fn in file_numbers_temp:
-		if len(fn) <= 2:
-			file_numbers.append(fn)
-	if len(file_numbers) != 2:
+	if len(file_numbers_temp) < 2:
 		print "--> %s is supported but doesn't have 2 numbers in its name. No action taken." % file_name
 		return
+	# Kick all numbers with more then 2 digits, those are not tv show for sure.
+	# We only run until we get two numbers, since thats what we require.
+	file_numbers = []
+	for fn in file_numbers_temp:
+		# Once we reach 2 valid numbers we are done.
+		if len(file_numbers) == 2:
+			break
+		if len(fn) > 2:
+			continue
+		if len(fn) == 1:
+			fn = "0%s" % fn
+		file_numbers.append(fn)
 
 	# Generate new name for the file and full path with extension to it.
 	new_file_name = FILE_RENAME_FORMAT % (file_numbers[0], file_numbers[1])
